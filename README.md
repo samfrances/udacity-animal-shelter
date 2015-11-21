@@ -1,4 +1,4 @@
-udacity-animal shelter
+udacity-animal-shelter
 =============
 
 My answer to [Udacity Full Stack Foundations](https://www.udacity.com/course/full-stack-foundations--ud088) Problem Set 1.
