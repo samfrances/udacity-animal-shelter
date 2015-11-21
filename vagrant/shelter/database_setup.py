@@ -16,6 +16,9 @@ class Shelter(Base):
     zipCode = Column(String(10))
     website = Column(String(80))
     
+    def __repr__(self):
+        return "<Shelter(id={}, name='{}', city='{}')>".format(self.id, self.name, self.city)
+    
 class Puppy(Base):
     __tablename__ = 'puppy'
     
@@ -27,6 +30,9 @@ class Puppy(Base):
     shelter_id = Column(Integer, ForeignKey('shelter.id'))
     shelter = relationship(Shelter)
     weight = Column(Numeric(10))
+    
+    def __repr__(self):
+        return "<Puppy(id={}, name='{}', gender='{}')>".format(self.id, self.name, self.gender)
 
 if __name__ == "__main__":
 
