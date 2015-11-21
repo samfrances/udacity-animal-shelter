@@ -1,0 +1,13 @@
+Using SQLAlchemy perform the following queries on your database:
+
+1. Query all of the puppies and return the results in ascending alphabetical order
+
+for puppy in session.query(Puppy).order_by(Puppy.name):
+    print puppy
+
+2. Query all of the puppies that are less than 6 months old organized by the youngest first
+
+
+
+3. Query all puppies by ascending weight
+4. Query all puppies grouped by the shelter in which they are staying
