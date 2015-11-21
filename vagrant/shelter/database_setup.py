@@ -1,40 +1,35 @@
-import sys
-
-from sqlalchemy import Column, ForeignKey, Integer, String, Date, Enum, Float
-
+from sqlalchemy import Column, ForeignKey, Integer, String, Date, Numeric, Enum
 from sqlalchemy.ext.declarative import declarative_base
-
 from sqlalchemy.orm import relationship
-
 from sqlalchemy import create_engine
-
+ 
 Base = declarative_base()
 
 class Shelter(Base):
-    __tablename__ = "shelter"
-    
-    name = Column(String(80), nullable = False)
+    __tablename__ = 'shelter'
+
     id = Column(Integer, primary_key = True)
-    address = Column(String(80))
+    name =Column(String(80), nullable = False)
+    address = Column(String(250))
     city = Column(String(80))
-    state = Column(String(80))
-    zipcode = Column(String(80))
+    state = Column(String(20))
+    zipCode = Column(String(10))
     website = Column(String(80))
     
 class Puppy(Base):
-    __tablename__ = "puppy"
+    __tablename__ = 'puppy'
     
-    name = Column(String(80), nullable = False)
-    id = Column(Integer, primary_key = True)
-    dob = Column(Date)
-    gender = Column(Enum("male", "female"))
-    weight = Column(Float)
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250), nullable=False)
+    gender = Column(Enum("male", "female"), nullable = False)
+    dateOfBirth = Column(Date)
+    picture = Column(String)
     shelter_id = Column(Integer, ForeignKey('shelter.id'))
-    
     shelter = relationship(Shelter)
+    weight = Column(Numeric(10))
 
 if __name__ == "__main__":
 
-    engine = create_engine('sqlite:///shelter.db', echo=True)
-
+    engine = create_engine('sqlite:///puppyshelter.db')
+ 
     Base.metadata.create_all(engine)
