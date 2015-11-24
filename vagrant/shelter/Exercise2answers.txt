@@ -7,7 +7,22 @@ for puppy in session.query(Puppy).order_by(Puppy.name):
 
 2. Query all of the puppies that are less than 6 months old organized by the youngest first
 
-
+from datetime import datetime, timedelta
+sixmonthsago = datetime.now() - timedelta(weeks=26)
+for puppy in session.query(Puppy).filter(Puppy.dateOfBirth > sixmonthsago).order_by(Puppy.dateOfBirth):
+	print puppy, puppy.dateOfBirth
 
 3. Query all puppies by ascending weight
+
+session.query(Puppy).order_by(Puppy.weight).all()
+
 4. Query all puppies grouped by the shelter in which they are staying
+
+Quesiton not clear. If they want us to count Puppies, grouping by shelter, then:
+
+from sqlalchemy import func
+session.query(func.count(Puppy.id), Shelter.name).join(Shelter, Shelter.id == Puppy.shelter_id).group_by(Puppy.shelter_id).all()
+
+If they just mean order the Puppies by shelter, then:
+
+session.query(Puppy).order_by(Puppy.shelter_id).all()
