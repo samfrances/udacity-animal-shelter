@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Date, Numeric, Enum
+from sqlalchemy import Column, ForeignKey, Integer, String, Date, Numeric, Enum, Table
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -30,6 +30,7 @@ class Puppy(Base):
     shelter = relationship(Shelter)
     weight = Column(Numeric(10))
     profile = relationship("PuppyProfile", uselist=False, backref="puppy")
+    adopters = relationship("Adopter", secondary=(lambda: puppy_adopter), backref="puppies")
     
     def __repr__(self):
         return "<Puppy(id={}, name='{}', gender='{}')>".format(self.id, self.name, self.gender)
@@ -41,7 +42,18 @@ class PuppyProfile(Base):
 	picture = Column(String)
 	description = Column(String(500))
 	puppy_id = Column(Integer, ForeignKey('puppy.id'))
+
+class Adopter(Base):
+	__tablename__ = 'adopter'
 	
+	id = Column(Integer, primary_key=True)
+	name = Column(String(250), nullable=False)
+	
+# Association table between adopters and puppies
+puppy_adopter = Table('puppy_adopter', Base.metadata,
+    Column('puppy_id', Integer, ForeignKey('puppy.id')),
+    Column('adopter_id', Integer, ForeignKey('adopter.id'))
+)
 
 if __name__ == "__main__":
 
