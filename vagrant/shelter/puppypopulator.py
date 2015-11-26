@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
  
-from database_setup import Base, Shelter, Puppy, PuppyProfile
+from database_setup import Base, Shelter, Puppy, PuppyProfile, Adopter
 #from flask.ext.sqlalchemy import SQLAlchemy
 from random import randint
 import datetime
@@ -33,6 +33,16 @@ session.add(shelter4)
 shelter5 = Shelter(name = "Palo Alto Humane Society" ,address = "1149 Chestnut St." ,city = "Menlo Park", state = "California" ,zipCode = "94025", website = "paloaltohumane.org")
 session.add(shelter5)
 
+# Add adopters
+
+adopter1 = Adopter(name="Bob")
+adopter2 = Adopter(name="Tim")
+adopter3 = Adopter(name="Carl")
+adopter4 = Adopter(name="Alison")
+adopter5 = Adopter(name="Jane")
+adopter6 = Adopter(name="Lauren")
+
+adopters = [adopter1, adopter2, adopter3, adopter4, adopter5, adopter6]
 
 #Add Puppies
 
@@ -63,10 +73,14 @@ def CreateRandomProfile():
 
 for i,x in enumerate(male_names):
 	new_puppy = Puppy(name = x, gender = "male", dateOfBirth = CreateRandomAge(),shelter_id=randint(1,5), weight= CreateRandomWeight(),profile=CreateRandomProfile())
+	new_puppy.adopters.append(random.choice(adopters))
+	new_puppy.adopters.append(random.choice(adopters))
 	session.add(new_puppy)
 	session.commit()
 
 for i,x in enumerate(female_names):
 	new_puppy = Puppy(name = x, gender = "female", dateOfBirth = CreateRandomAge(),shelter_id=randint(1,5), weight= CreateRandomWeight(),profile=CreateRandomProfile())
+	new_puppy.adopters.append(random.choice(adopters))
+	new_puppy.adopters.append(random.choice(adopters))
 	session.add(new_puppy)
 	session.commit()

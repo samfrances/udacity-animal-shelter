@@ -49,6 +49,9 @@ class Adopter(Base):
 	id = Column(Integer, primary_key=True)
 	name = Column(String(250), nullable=False)
 	
+	def __repr__(self):
+		return "<Adopter(id={}, name='{}')>".format(self.id, self.name)
+	
 # Association table between adopters and puppies
 puppy_adopter = Table('puppy_adopter', Base.metadata,
     Column('puppy_id', Integer, ForeignKey('puppy.id')),
