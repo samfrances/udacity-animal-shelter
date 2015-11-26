@@ -26,13 +26,22 @@ class Puppy(Base):
     name = Column(String(250), nullable=False)
     gender = Column(Enum("male", "female"), nullable = False)
     dateOfBirth = Column(Date)
-    picture = Column(String)
     shelter_id = Column(Integer, ForeignKey('shelter.id'))
     shelter = relationship(Shelter)
     weight = Column(Numeric(10))
+    profile = relationship("PuppyProfile", uselist=False, backref="puppy")
     
     def __repr__(self):
         return "<Puppy(id={}, name='{}', gender='{}')>".format(self.id, self.name, self.gender)
+
+class PuppyProfile(Base):
+	__tablename__ = 'puppy_profile'
+	
+	id = Column(Integer, primary_key=True)
+	picture = Column(String)
+	description = Column(String(500))
+	puppy_id = Column(Integer, ForeignKey('puppy.id'))
+	
 
 if __name__ == "__main__":
 
