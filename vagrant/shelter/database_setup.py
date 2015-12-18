@@ -15,6 +15,8 @@ class Shelter(Base):
     state = Column(String(20))
     zipCode = Column(String(10))
     website = Column(String(80))
+    maximum_capacity = Column(Integer, default=10)
+    current_occupancy = Column(Integer, default=0)
     
     def __repr__(self):
         return "<Shelter(id={}, name='{}', city='{}')>".format(self.id, self.name, self.city)
