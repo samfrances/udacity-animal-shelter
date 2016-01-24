@@ -21,6 +21,9 @@ class Shelter(Base):
     def __repr__(self):
         return "<Shelter(id={}, name='{}', city='{}')>".format(self.id, self.name, self.city)
     
+    def checkIn(self, puppy):
+        pass
+    
 class Puppy(Base):
     __tablename__ = 'puppy'
     
@@ -29,7 +32,7 @@ class Puppy(Base):
     gender = Column(Enum("male", "female"), nullable = False)
     dateOfBirth = Column(Date)
     shelter_id = Column(Integer, ForeignKey('shelter.id'))
-    shelter = relationship(Shelter)
+    shelter = relationship(Shelter, backref="puppies")
     weight = Column(Numeric(10))
     profile = relationship("PuppyProfile", uselist=False, backref="puppy")
     adopters = relationship("Adopter", secondary=(lambda: puppy_adopter), backref="puppies")
