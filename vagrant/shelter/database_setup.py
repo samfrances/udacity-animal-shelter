@@ -2,6 +2,8 @@ from sqlalchemy import Column, ForeignKey, Integer, String, Date, Numeric, Enum,
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
+from sqlalchemy.orm.session import object_session
+from warnings import warn
  
 Base = declarative_base()
 
@@ -22,7 +24,19 @@ class Shelter(Base):
         return "<Shelter(id={}, name='{}', city='{}')>".format(self.id, self.name, self.city)
     
     def checkIn(self, puppy):
-        pass
+        """Check in a puppy if there is room. (May not be safe from race conditions)"""
+        session = object_session(self) #Get current session
+        if self.maximum_capacity > self.current_occupancy: # If our shelter is not full
+            old_shelter = puppy.shelter # Remember the previous shelter
+            puppy.shelter = self # Check the puppy in to this shelter
+            # Update the current occupancy of this sheter
+            self.current_occupancy = session.query(Puppy).filter(Puppy.shelter == self).count()
+            # Update the current occupancy of the previous shelter
+            if old_shelter:
+                old_shelter.current_occupancy = session.query(Puppy).filter(Puppy.shelter == old_shelter).count()
+            session.commit()
+        else:
+            warn("There is no more room in this shelter")
     
 class Puppy(Base):
     __tablename__ = 'puppy'

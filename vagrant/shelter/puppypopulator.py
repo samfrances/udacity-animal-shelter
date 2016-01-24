@@ -18,19 +18,19 @@ session = DBSession()
 
 
 #Add Shelters
-shelter1 = Shelter(name = "Oakland Animal Services", address = "1101 29th Ave", city = "Oakland", state = "California", zipCode = "94601", website = "oaklandanimalservices.org")
+shelter1 = Shelter(name = "Oakland Animal Services", address = "1101 29th Ave", city = "Oakland", state = "California", zipCode = "94601", website = "oaklandanimalservices.org", maximum_capacity=100)
 session.add(shelter1)
 
-shelter2 = Shelter(name = "San Francisco SPCA Mission Adoption Center", address="250 Florida St", city="San Francisco", state="California", zipCode = "94103", website = "sfspca.org")
+shelter2 = Shelter(name = "San Francisco SPCA Mission Adoption Center", address="250 Florida St", city="San Francisco", state="California", zipCode = "94103", website = "sfspca.org", maximum_capacity=100)
 session.add(shelter2)
 
-shelter3 = Shelter(name = "Wonder Dog Rescue", address= "2926 16th Street", city = "San Francisco", state = "California" , zipCode = "94103", website = "http://wonderdogrescue.org")
+shelter3 = Shelter(name = "Wonder Dog Rescue", address= "2926 16th Street", city = "San Francisco", state = "California" , zipCode = "94103", website = "http://wonderdogrescue.org", maximum_capacity=100)
 session.add(shelter3)
 
-shelter4 = Shelter(name = "Humane Society of Alameda", address = "PO Box 1571" ,city = "Alameda" ,state = "California", zipCode = "94501", website = "hsalameda.org")
+shelter4 = Shelter(name = "Humane Society of Alameda", address = "PO Box 1571" ,city = "Alameda" ,state = "California", zipCode = "94501", website = "hsalameda.org", maximum_capacity=100)
 session.add(shelter4)
 
-shelter5 = Shelter(name = "Palo Alto Humane Society" ,address = "1149 Chestnut St." ,city = "Menlo Park", state = "California" ,zipCode = "94025", website = "paloaltohumane.org")
+shelter5 = Shelter(name = "Palo Alto Humane Society" ,address = "1149 Chestnut St." ,city = "Menlo Park", state = "California" ,zipCode = "94025", website = "paloaltohumane.org", maximum_capacity=100)
 session.add(shelter5)
 
 # Add adopters
@@ -71,16 +71,29 @@ def CreateRandomProfile():
 	description = random.choice(puppy_descriptions)
 	return PuppyProfile(picture=picture, description=description)
 
+#This will check a puppy in to a random shelter
+def CheckInToRandomShelter(puppy):
+    shelter_id = randint(1,5)
+    session.query(Shelter).filter(Shelter.id == shelter_id).one().checkIn(puppy)
+
 for i,x in enumerate(male_names):
-	new_puppy = Puppy(name = x, gender = "male", dateOfBirth = CreateRandomAge(),shelter_id=randint(1,5), weight= CreateRandomWeight(),profile=CreateRandomProfile())
+	new_puppy = Puppy(name = x, gender = "male", dateOfBirth = CreateRandomAge(), weight= CreateRandomWeight(),profile=CreateRandomProfile())
 	new_puppy.adopters.append(random.choice(adopters))
 	new_puppy.adopters.append(random.choice(adopters))
 	session.add(new_puppy)
 	session.commit()
+	CheckInToRandomShelter(new_puppy)
 
 for i,x in enumerate(female_names):
-	new_puppy = Puppy(name = x, gender = "female", dateOfBirth = CreateRandomAge(),shelter_id=randint(1,5), weight= CreateRandomWeight(),profile=CreateRandomProfile())
+	new_puppy = Puppy(name = x, gender = "female", dateOfBirth = CreateRandomAge(), weight= CreateRandomWeight(),profile=CreateRandomProfile())
 	new_puppy.adopters.append(random.choice(adopters))
 	new_puppy.adopters.append(random.choice(adopters))
 	session.add(new_puppy)
 	session.commit()
+	CheckInToRandomShelter(new_puppy)
+
+# Create an unoccupied shelter
+
+shelter6 = Shelter(name = "Very Small Shelter" ,address = "1444 Chestnut St." ,city = "Menlo Park", state = "California" ,zipCode = "94025", website = "verysmallanimalshelter.org", maximum_capacity=3)
+session.add(shelter6)
+session.commit()
