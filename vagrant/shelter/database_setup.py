@@ -23,18 +23,22 @@ class Shelter(Base):
     def __repr__(self):
         return "<Shelter(id={}, name='{}', city='{}')>".format(self.id, self.name, self.city)
     
+    def recalculateOccupancy(self):
+        session = object_session(self)
+        self.current_occupancy = session.query(Puppy).filter(Puppy.shelter == self).count()
+    
     def checkIn(self, puppy):
         """Check in a puppy if there is room. (May not be safe from race conditions)"""
-        session = object_session(self) #Get current session
         if self.maximum_capacity > self.current_occupancy: # If our shelter is not full
             old_shelter = puppy.shelter # Remember the previous shelter
             puppy.shelter = self # Check the puppy in to this shelter
             # Update the current occupancy of this sheter
-            self.current_occupancy = session.query(Puppy).filter(Puppy.shelter == self).count()
+            self.recalculateOccupancy()
             # Update the current occupancy of the previous shelter
             if old_shelter:
-                old_shelter.current_occupancy = session.query(Puppy).filter(Puppy.shelter == old_shelter).count()
-            session.commit()
+                old_shelter.recalculateOccupancy()
+            # Remove adopters
+            puppy.adopters = []
         else:
             warn("There is no more room in this shelter")
     
@@ -53,6 +57,15 @@ class Puppy(Base):
     
     def __repr__(self):
         return "<Puppy(id={}, name='{}', gender='{}')>".format(self.id, self.name, self.gender)
+    
+    def adopt(self, *adopters):
+        old_shelter = self.shelter
+        self.shelter = None
+        if old_shelter:
+            old_shelter.recalculateOccupancy()
+        for adopter in adopters:
+            self.adopters.append(adopter)
+        
 
 class PuppyProfile(Base):
 	__tablename__ = 'puppy_profile'

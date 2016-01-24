@@ -56,41 +56,46 @@ puppy_descriptions = ["A very nice puppy", "A very badly behaved puppy", "A pupp
 
 #This method will make a random age for each puppy between 0-18 months(approx.) old from the day the algorithm was run.
 def CreateRandomAge():
-	today = datetime.date.today()
-	days_old = randint(0,540)
-	birthday = today - datetime.timedelta(days = days_old)
-	return birthday
+    today = datetime.date.today()
+    days_old = randint(0,540)
+    birthday = today - datetime.timedelta(days = days_old)
+    return birthday
 
 #This method will create a random weight between 1.0-40.0 pounds (or whatever unit of measure you prefer)
 def CreateRandomWeight():
-	return random.uniform(1.0, 40.0)
+    return random.uniform(1.0, 40.0)
 
 #This will create a random profile for a Puppy
 def CreateRandomProfile():
-	picture = random.choice(puppy_images)
-	description = random.choice(puppy_descriptions)
-	return PuppyProfile(picture=picture, description=description)
+    picture = random.choice(puppy_images)
+    description = random.choice(puppy_descriptions)
+    return PuppyProfile(picture=picture, description=description)
 
 #This will check a puppy in to a random shelter
 def CheckInToRandomShelter(puppy):
     shelter_id = randint(1,5)
     session.query(Shelter).filter(Shelter.id == shelter_id).one().checkIn(puppy)
 
+# Create puppies and wither have adopted or check in to random shelter
 for i,x in enumerate(male_names):
-	new_puppy = Puppy(name = x, gender = "male", dateOfBirth = CreateRandomAge(), weight= CreateRandomWeight(),profile=CreateRandomProfile())
-	new_puppy.adopters.append(random.choice(adopters))
-	new_puppy.adopters.append(random.choice(adopters))
-	session.add(new_puppy)
-	session.commit()
-	CheckInToRandomShelter(new_puppy)
+    new_puppy = Puppy(name = x, gender = "male", dateOfBirth = CreateRandomAge(), weight= CreateRandomWeight(),profile=CreateRandomProfile())
+    session.add(new_puppy)
+    
+    if randint(0,1):
+        new_puppy.adopt(random.choice(adopters), random.choice(adopters))
+    else:
+        CheckInToRandomShelter(new_puppy)
+    session.commit()
 
 for i,x in enumerate(female_names):
-	new_puppy = Puppy(name = x, gender = "female", dateOfBirth = CreateRandomAge(), weight= CreateRandomWeight(),profile=CreateRandomProfile())
-	new_puppy.adopters.append(random.choice(adopters))
-	new_puppy.adopters.append(random.choice(adopters))
-	session.add(new_puppy)
-	session.commit()
-	CheckInToRandomShelter(new_puppy)
+    new_puppy = Puppy(name = x, gender = "female", dateOfBirth = CreateRandomAge(), weight= CreateRandomWeight(),profile=CreateRandomProfile())
+    session.add(new_puppy)
+    
+    if randint(0,1):
+        new_puppy.adopt(random.choice(adopters), random.choice(adopters))
+    else:
+        CheckInToRandomShelter(new_puppy)
+    session.commit()
 
 # Create an unoccupied shelter
 
